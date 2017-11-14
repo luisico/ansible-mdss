@@ -1,0 +1,12 @@
+---
+# Path to the installer script
+mdss_installer_path:
+
+# URL to download the ISO installer from
+mdss_installer_iso_url:
+
+# Path where to install the software
+mdss_install_path: /opt/dell/mdstoragemanager
+
+# Model(s) to manage (see template/installer.properties.j2)
+mdss_install_model:

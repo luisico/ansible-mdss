@@ -1,0 +1,13 @@
+galaxy_info:
+  author: Luis Gracia
+  description: Install Dell MD Storage Manager
+  license: MIT
+  min_ansible_version: 2.3
+  platforms:
+    - name: EL
+      versions:
+        - 6
+  galaxy_tags:
+    - system
+    - storage
+dependencies: []
