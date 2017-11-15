@@ -1,0 +1,29 @@
+---
+# Reference: https://access.redhat.com/solutions/1282013
+
+- name: Configure LVM filters
+  blockinfile:
+    path: /etc/lvm/lvm.conf
+    create: yes
+    state: '{{"present" if mdss_lvm_filters != [] else "absent"}}'
+    insertafter: '^devices {'
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: filters"
+    block: |2
+              filter = {{mdss_lvm_filters | to_json}}
+              global_filter = {{mdss_lvm_filters | to_json}}
+
+- block:
+    - name: Rebuild initramfs
+      command: dracut --force
+
+    - name: Restart server
+      command: /sbin/shutdown -r +1
+      async: 0
+      poll: 0
+      ignore_errors: true
+
+    - name: Wait for reboot
+      wait_for_connection: timeout=300 delay=30
+
+  when: mdss__r_lvm.changed
+
