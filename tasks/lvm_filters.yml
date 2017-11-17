@@ -11,6 +11,7 @@
     block: |2
               filter = {{mdss_lvm_filters | to_json}}
               global_filter = {{mdss_lvm_filters | to_json}}
+  register: mdss__r_lvm
 
 - block:
     - name: Rebuild initramfs
