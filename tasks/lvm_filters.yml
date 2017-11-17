@@ -7,7 +7,7 @@
     create: yes
     state: '{{"present" if mdss_lvm_filters != [] else "absent"}}'
     insertafter: '^devices {'
-    marker: "# {mark} ANSIBLE MANAGED BLOCK: filters"
+    marker: '# {mark} ANSIBLE MANAGED BLOCK: filters'
     block: |2
               filter = {{mdss_lvm_filters | to_json}}
               global_filter = {{mdss_lvm_filters | to_json}}
