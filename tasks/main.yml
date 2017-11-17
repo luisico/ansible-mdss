@@ -10,7 +10,6 @@
   register: mdss__r_last_install_successful
   when: mdss__r_install_logs.matched > 0
 
-- debug: var=mdss__r_last_install_successful
 - block:
   - name: Create installer path
     file: path={{mdss_installer_path}} state=directory
