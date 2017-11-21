@@ -33,7 +33,6 @@
 
   - name: Mount ISO
     mount: path={{mdss_installer_path}}/mnt src={{mdss_installer_path}}/{{mdss_installer_iso_url | basename}} fstype=iso9660 opts='ro,noauto,loop' state=mounted
-    # mount: path={{mdss_installer_path}}/mnt src=/vagrant/{{mdss_installer_iso_url | basename}} fstype=iso9660 opts='ro,noauto,loop' state=mounted
 
   - name: Run the md_prereq_install.sh script
     command: '{{mdss_installer_path}}/mnt/md_prereq_install.sh'
