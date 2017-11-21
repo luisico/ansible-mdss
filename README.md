@@ -29,6 +29,7 @@ Example:
 TODO
 ----
 - Support other installation sets
+- Improve documentation
 
 Licence
 -------
