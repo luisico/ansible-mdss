@@ -50,4 +50,4 @@
 - name: Force umouninting the ISO
   mount: path={{mdss_installer_path}}/mnt state=unmounted
 
-- include: lvm_filters.yml
+- import_tasks: lvm_filters.yml
