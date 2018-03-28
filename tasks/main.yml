@@ -45,7 +45,7 @@
   - name: Run the installer
     command: '{{mdss_installer_path}}/mnt/linux/mdss_install.bin -f {{mdss_installer_path}}/installer.properties'
 
-  when: mdss__r_last_install_successful | skipped or mdss__r_last_install_successful.matched == 0
+  when: mdss__r_last_install_successful is skipped or mdss__r_last_install_successful.matched == 0
 
 - name: Force umouninting the ISO
   mount: path={{mdss_installer_path}}/mnt state=unmounted
