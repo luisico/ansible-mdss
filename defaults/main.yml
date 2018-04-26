@@ -13,3 +13,6 @@ mdss_install_model:
 
 # List of LVM devices to add to `filter` and `global_filter` in `/etc/lvm/lvm.conf`
 mdss_lvm_filters: []
+
+# Seconds to wait for reboot
+mdss_reboot_timeout: 600
