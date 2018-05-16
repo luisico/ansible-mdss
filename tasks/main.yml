@@ -15,6 +15,7 @@
   with_items:
     - device-mapper-multipath
     - xfsprogs
+    - system-storage-manager
   # TODO: move xfsprogs to outside this role
 
 - block:
