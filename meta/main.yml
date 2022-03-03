@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: mdss
   author: Luis Gracia
   description: Install Dell MD Storage Manager
   license: MIT
