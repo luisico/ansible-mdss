@@ -4,26 +4,27 @@
 - name: Configure LVM filters
   blockinfile:
     path: /etc/lvm/lvm.conf
-    create: yes
-    state: '{{"present" if mdss_lvm_filters != [] else "absent"}}'
+    create: true
+    state: '{{ "present" if mdss_lvm_filters != [] else "absent" }}'
     insertafter: '^devices {'
     marker: '# {mark} ANSIBLE MANAGED BLOCK: filters'
     block: |2
-              filter = {{mdss_lvm_filters | to_json}}
-              global_filter = {{mdss_lvm_filters | to_json}}
+              filter = {{ mdss_lvm_filters | to_json }}
+              global_filter = {{ mdss_lvm_filters | to_json }}
+    mode: '0644'
   register: mdss__r_lvm
 
 - block:
     - name: Rebuild initramfs
       command: dracut --force
 
-    - name: Restart server
+    - name: Restart server   # noqa: ignore-errors
       shell: sleep 5 && /sbin/shutdown -r now
       async: 1
       poll: 0
       ignore_errors: true
 
     - name: Wait for reboot
-      wait_for_connection: timeout='{{mdss_reboot_timeout}}' delay=30
+      wait_for_connection: timeout='{{ mdss_reboot_timeout }}' delay=30
 
   when: mdss__r_lvm.changed

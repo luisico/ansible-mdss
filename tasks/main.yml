@@ -1,17 +1,23 @@
 ---
 - name: Find all installation logs
-  find: path='{{mdss_install_path}}' patterns='Dell_MD_Storage_Software_Install_*.log'
+  find:
+    path: '{{ mdss_install_path }}'
+    patterns: 'Dell_MD_Storage_Software_Install_*.log'
   register: mdss__r_install_logs
 
 - name: Check if MDSS was successful intalled on the last attempt
-  find: path='{{mdss_install_path}}' patterns='{{mdss__r_install_logs | json_query('sort_by(files, &mtime)[*].path') | last | basename}}'
+  find:
+    path: '{{ mdss_install_path }}'
+    patterns: "{{ mdss__r_install_logs | json_query('sort_by(files, &mtime)[*].path') | last | basename }}"
   args:
     contains: 'Installation: Successful'
   register: mdss__r_last_install_successful
   when: mdss__r_install_logs.matched > 0
 
 - name: Install dependencies
-  yum: name={{item}} state=present
+  yum:
+    name: '{{ item }}'
+    state: present
   with_items:
     - device-mapper-multipath
     - xfsprogs
@@ -19,36 +25,54 @@
   # TODO: move xfsprogs to outside this role
 
 - block:
-  - name: Create installer path
-    file: path={{mdss_installer_path}} state=directory
+  - name: Create installer path   # noqa: yaml
+    file:
+      path: '{{ mdss_installer_path }}'
+      state: directory
+      mode: '0750'
 
   - name: Prepare installer.properties
-    template: dest={{mdss_installer_path}}/installer.properties src=installer.properties.j2
+    template:
+      dest: '{{ mdss_installer_path }}/installer.properties'
+      src: installer.properties.j2
+      mode: '0640'
 
   - name: Downdload ISO
-    get_url: dest={{mdss_installer_path}} url={{mdss_installer_iso_url}}
+    get_url:
+      dest: '{{ mdss_installer_path }}'
+      url: '{{ mdss_installer_iso_url }}'
     # TODO: skip if already there
 
   - name: Create installer ISO mount point
-    file: path={{mdss_installer_path}}/mnt state=directory
+    file:
+      path: '{{ mdss_installer_path }}/mnt'
+      state: directory
+      mode: '0755'
 
   - name: Mount ISO
-    mount: path={{mdss_installer_path}}/mnt src={{mdss_installer_path}}/{{mdss_installer_iso_url | basename}} fstype=iso9660 opts='ro,noauto,loop' state=mounted
+    mount:
+      path: '{{ mdss_installer_path }}/mnt'
+      src: '{{ mdss_installer_path }}/{{ mdss_installer_iso_url | basename }}'
+      fstype: iso9660
+      opts: 'ro,noauto,loop'
+      state: mounted
 
   - name: Run the md_prereq_install.sh script
-    command: '{{mdss_installer_path}}/mnt/md_prereq_install.sh'
+    command: '{{ mdss_installer_path }}/mnt/md_prereq_install.sh'
     # TODO: not idempotent
 
   - name: Run the hostnameupdates.sh script
-    command: '{{mdss_installer_path}}/mnt/linux_hostnameupdates.sh'
+    command: '{{ mdss_installer_path }}/mnt/linux_hostnameupdates.sh'
     # TODO: not idempotent and fails if networkmanager is not installed on CentOS 6.9
 
   - name: Run the installer
-    command: '{{mdss_installer_path}}/mnt/linux/mdss_install.bin -f {{mdss_installer_path}}/installer.properties'
+    command: '{{ mdss_installer_path }}/mnt/linux/mdss_install.bin -f {{ mdss_installer_path }}/installer.properties'
 
   when: mdss__r_last_install_successful is skipped or mdss__r_last_install_successful.matched == 0
 
 - name: Force umouninting the ISO
-  mount: path={{mdss_installer_path}}/mnt state=unmounted
+  mount:
+    path: '{{ mdss_installer_path }}/mnt'
+    state: unmounted
 
 - import_tasks: lvm_filters.yml
